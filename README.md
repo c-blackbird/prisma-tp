@@ -14,7 +14,3 @@ El flujo principal procesa una compra dentro de una transacción SQL, descuenta 
 - PostgreSQL (Neon)
 - Swagger UI + OpenAPI 3.0
 - dotenv
-
----
-
-## Arquitectura por capas
