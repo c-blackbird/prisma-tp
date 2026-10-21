@@ -1,0 +1,89 @@
+openapi: 3.0.3
+info:
+  title: API Tienda - Checkout
+  version: 1.0.0
+  description: Contrato para procesar pedidos con Prisma ORM.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/pedidos:
+    post:
+      summary: Procesa el checkout de una compra
+      operationId: crearPedido
+      tags: [Pedidos]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutDTO'
+            example:
+              usuarioId: 1
+              productosComprados:
+                - productoId: 1
+                  cantidad: 2
+                - productoId: 2
+                  cantidad: 1
+      responses:
+        '201':
+          description: Pedido creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pedido'
+        '400':
+          description: Datos inválidos o stock insuficiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Entidad no procesable (validación semántica)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    CheckoutDTO:
+      type: object
+      required: [usuarioId, productosComprados]
+      properties:
+        usuarioId:
+          type: integer
+          example: 1
+        productosComprados:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [productoId, cantidad]
+            properties:
+              productoId:
+                type: integer
+                example: 1
+              cantidad:
+                type: integer
+                minimum: 1
+                example: 2
+    Pedido:
+      type: object
+      properties:
+        id: { type: integer }
+        usuarioId: { type: integer }
+        total: { type: number, format: float }
+        estado: { type: string }
+        createdAt: { type: string, format: date-time }
+        detalles:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: integer }
+              productoId: { type: integer }
+              cantidad: { type: integer }
+              precioUnit: { type: number }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
